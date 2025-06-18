@@ -1,0 +1,85 @@
+import json
+import os.path
+import pytz
+
+import textutils as txtu
+
+class cfgs:
+    cfg = {
+        'showEmojis' : True,
+        'postsPerPage' : 4,
+        'timezone' : 'America/Sao_Paulo',
+        'session' : {
+            'did' : '',
+            'accessJwt' : '',
+            'refreshJwt' : '',
+            'active' : True
+        }
+    }
+
+    tz = None
+
+    descriptions = {
+        'showEmojis' : 'Disable emojis for terminals that can\'t display them properly.',
+        'postsPesPage' : 'Number of posts shown in each timeline page.'
+    }
+
+    @staticmethod
+    def loadConfigs():
+        if (os.path.isfile('config.json')):
+            with open('config.json', 'r') as f:
+                cfgs.cfg = json.loads(f.read())
+                tz = pytz.timezone(cfgs.cfg['timezone'])
+
+    @staticmethod
+    def saveConfigs():
+        with open('config.json', 'w') as f:
+            f.write(json.dumps(cfgs.cfg))
+
+    @staticmethod
+    def listConfigs():
+        print(txtu.bcolors.blue+'---Configs---'+txtu.bcolors.end)
+        for item in cfgs.cfg:
+            if (type(cfgs.cfg[item]) != dict):
+                print(item+' - '+descriptions[item]+' : '+str(cfgs.cfg[item]))
+
+    @staticmethod
+    def config(param):
+        paramName = param.split('=')[0]
+        paramVal = param.split('=')[1]
+        match param:
+            case 'list':
+                cfgs.listConfigs()
+            case 'help':
+                print(txtu.bcolors.blue+'---Configs help---'+txtu.bcolors.end)
+                print('The following parameters are available for use with '+txtu.bcolors.bold+'config'+txtu.bcolors.end+' command:')
+                print('list - Lists the configuration variables and their current values.')
+                print('help - Show this help text.')
+                print('\nTo change a variable, the syntax is: '+txtu.bcolors.bold+'config.variableName=newValue'+txtu.bcolors.end)
+                print('Example: '+txtu.bcolors.bold+'config.showEmojis=False'+txtu.bcolors.end+' will set showEmojis to False, disabling emojis.')
+            case _:
+                if (paramName in cfgs.cfg):
+                    newVal = None
+                    varType = type(cfgs.cfg[paramName])
+                    if (varType == str):
+                        newVal = paramVal
+                        tz = pytz.timezone(cfgs.cfg['timezone'])
+                    elif (varType == int):
+                        try:
+                            newVal = int(paramVal)
+                        except:
+                            print(txtu.bcolors.red+'Error! This variable requires an int value, but the valued informed couldn\'t be parsed.'+txtu.bcolors.end)
+                    elif (varType == bool):
+                        if (paramVal == 'True' or paramVal == 'true' or paramVal == '1'):
+                            newVal = True
+                        elif (paramVal == 'False' or paramVal == 'false' or paramVal == '0'):
+                            newVal = False
+                        else:
+                            print(txtu.bcolors.red+'Error! This variable requires an boolean value, but the valued informed is invalid.'+txtu.bcolors.end)                                
+                    else:
+                        print(txtu.bcolors.red+'Oops! cfg change for this type of variable is not implemented!'+txtu.bcolors.end)
+                    
+                    cfgs.cfg[paramName] = newVal
+                    print(txtu.bcolors.bold+paramName+txtu.bcolors.end+' set to '+txtu.bcolors.bold+paramVal+txtu.bcolors.end)
+                else:
+                    print(txtu.bcolors.red+'Error! No variable named \''+paramName+'\' was found.'+txtu.bcolors.end)
