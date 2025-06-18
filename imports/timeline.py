@@ -1,12 +1,11 @@
-import textutils as txtu
-
+from imports import textutils as txtu
+from imports.configs import cfgs
 
 import math
 import pytz
 import os
 import json
 
-from configs import cfgs
 from dateutil import parser
 from datetime import datetime
 from datetime import timezone

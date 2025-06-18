@@ -1,10 +1,10 @@
 #!/usr/bin/python
-import textutils as txtu
-import timeline as tl
+from imports import textutils as txtu
+from imports import timeline as tl
+from imports.configs import cfgs
 
 import getpass
 
-from configs import cfgs
 from chitose import BskyAgent
 from urllib.error import HTTPError
 
@@ -38,6 +38,7 @@ def main():
             cfgs.cfg['session']['refreshJwt'] = agent.session['refreshJwt']
             cfgs.cfg['session']['active'] = agent.session['active']
             cfgs.cfg['session']['did'] = agent.session['did']
+            cfgs.saveConfigs()
             isLoggedIn = True
         except HTTPError:
             print(txtu.bcolors.red+'Login error, please check your credentials and try again.\n'+txtu.bcolors.end)
@@ -55,7 +56,7 @@ def main():
                 if (len(cmdSplit) > 1):
                     cfgs.config(cmdSplit[1])
                 else:
-                    print(txtu.bcolors.red+'No parameters provided, try \'configs.help´\' to get a list of parameters.'+txtu.bcolors.end)
+                    print(txtu.bcolors.red+'No parameters provided, try \'config.help´\' to get a list of parameters.'+txtu.bcolors.end)
             case 'tl':
                 tl.timeline(agent)
             case 'help':

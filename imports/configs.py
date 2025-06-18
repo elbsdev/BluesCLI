@@ -2,7 +2,7 @@ import json
 import os.path
 import pytz
 
-import textutils as txtu
+from imports import textutils as txtu
 
 class cfgs:
     cfg = {
@@ -21,7 +21,8 @@ class cfgs:
 
     descriptions = {
         'showEmojis' : 'Disable emojis for terminals that can\'t display them properly.',
-        'postsPesPage' : 'Number of posts shown in each timeline page.'
+        'postsPerPage' : 'Number of posts shown in each timeline page.',
+        'timezone' : 'Your current timezone. Default is São Paulo because i\'m brazilian.'
     }
 
     @staticmethod
@@ -29,7 +30,7 @@ class cfgs:
         if (os.path.isfile('config.json')):
             with open('config.json', 'r') as f:
                 cfgs.cfg = json.loads(f.read())
-                tz = pytz.timezone(cfgs.cfg['timezone'])
+                cfgs.tz = pytz.timezone(cfgs.cfg['timezone'])
 
     @staticmethod
     def saveConfigs():
@@ -41,12 +42,17 @@ class cfgs:
         print(txtu.bcolors.blue+'---Configs---'+txtu.bcolors.end)
         for item in cfgs.cfg:
             if (type(cfgs.cfg[item]) != dict):
-                print(item+' - '+descriptions[item]+' : '+str(cfgs.cfg[item]))
+                #print(item+' - '+cfgs.descriptions[item]+' : '+str(cfgs.cfg[item]))
+                print(item+' - '+str(cfgs.cfg[item]))
 
     @staticmethod
     def config(param):
-        paramName = param.split('=')[0]
-        paramVal = param.split('=')[1]
+        if ('=' in param):
+            paramName = param.split('=')[0]
+            paramVal = param.split('=')[1]
+        else:
+            paramName = ''
+            paramVal = None
         match param:
             case 'list':
                 cfgs.listConfigs()
@@ -63,11 +69,17 @@ class cfgs:
                     varType = type(cfgs.cfg[paramName])
                     if (varType == str):
                         newVal = paramVal
-                        tz = pytz.timezone(cfgs.cfg['timezone'])
+                        if (paramName == 'timezone'):
+                            try:
+                                cfgs.tz = pytz.timezone(newVal)
+                            except:
+                                newVal = None
+                                print(txtu.bcolors.red+'Error! Invalid timezone.'+txtu.bcolors.end)
                     elif (varType == int):
                         try:
                             newVal = int(paramVal)
                         except:
+                            newVal = None
                             print(txtu.bcolors.red+'Error! This variable requires an int value, but the valued informed couldn\'t be parsed.'+txtu.bcolors.end)
                     elif (varType == bool):
                         if (paramVal == 'True' or paramVal == 'true' or paramVal == '1'):
@@ -75,11 +87,13 @@ class cfgs:
                         elif (paramVal == 'False' or paramVal == 'false' or paramVal == '0'):
                             newVal = False
                         else:
+                            newVal = None
                             print(txtu.bcolors.red+'Error! This variable requires an boolean value, but the valued informed is invalid.'+txtu.bcolors.end)                                
                     else:
                         print(txtu.bcolors.red+'Oops! cfg change for this type of variable is not implemented!'+txtu.bcolors.end)
                     
-                    cfgs.cfg[paramName] = newVal
-                    print(txtu.bcolors.bold+paramName+txtu.bcolors.end+' set to '+txtu.bcolors.bold+paramVal+txtu.bcolors.end)
+                    if (newVal != None):
+                        cfgs.cfg[paramName] = newVal
+                        print(txtu.bcolors.bold+paramName+txtu.bcolors.end+' set to '+txtu.bcolors.bold+paramVal+txtu.bcolors.end)
                 else:
                     print(txtu.bcolors.red+'Error! No variable named \''+paramName+'\' was found.'+txtu.bcolors.end)
