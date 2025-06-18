@@ -142,5 +142,17 @@ def timeline(agent):
                     startIdx = cfgs.cfg['postsPerPage']*(page-1)
                     listPage(feedJson, startIdx, cfgs.cfg['postsPerPage'], 0)
                     print('Showing page '+str(page)+'/'+str(maxPages))
+            case 'help':
+                print(txtu.bcolors.blue+'---Timeline commands---'+txtu.bcolors.end)
+                print('back  -  Go back to the main prompt.')
+                print('r  -  Refresh your timeline.')
+                print('rcl  -  Clear the screen and refresh your timeline.')
+                print(txtu.bcolors.blue+'--Post interaction--'+txtu.bcolors.end)
+                print('like  -  Like a post. Usage: like.<post number>')
+                print('reply  -  Reply a post. Usage: reply.<post number>')
+                print('post  -  Create a post. Usage: post.Your text here!')
+                print(txtu.bcolors.blue+'--Pages--'+txtu.bcolors.end)
+                print('np  -  Go to the next page.')
+                print('pp  -  Return to the previous page.')
             case _:
                 print(txtu.bcolors.red+'Invalid command, type help for a list of commands.'+txtu.bcolors.end)

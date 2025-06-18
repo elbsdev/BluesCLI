@@ -58,6 +58,11 @@ def main():
                     print(txtu.bcolors.red+'No parameters provided, try \'configs.help´\' to get a list of parameters.'+txtu.bcolors.end)
             case 'tl':
                 tl.timeline(agent)
+            case 'help':
+                print(txtu.bcolors.blue+'---Help---'+txtu.bcolors.end)
+                print('config  -  change configuration variables.')
+                print('help  -  this help text.')
+                print('tl  -  enter timeline.')
             case _:
                 print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
     
