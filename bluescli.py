@@ -48,6 +48,28 @@ def main():
         cmd = input('>')
         cmdSplit = cmd.split('.')
 
+        if (cmdSplit[0] == 'quit'):
+            print('Quitting now, goodbye!')
+            endProg = True
+        
+        elif (cmdSplit[0] == 'config'):
+            if (len(cmdSplit) > 1):
+                cfgs.config(cmdSplit[1])
+            else:
+                print(txtu.bcolors.red+'No parameters provided, try \'config.help´\' to get a list of parameters.'+txtu.bcolors.end)
+        
+        elif (cmdSplit[0] == 'tl'):
+            tl.timeline(agent)
+        
+        elif (cmdSplit[0] == 'help'):
+            print(txtu.bcolors.blue+'---Help---'+txtu.bcolors.end)
+            print('config  -  change configuration variables.')
+            print('help  -  this help text.')
+            print('tl  -  enter timeline.')
+
+        else:
+            print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
+        '''
         match cmdSplit[0]:
             case 'quit':
                 print('Quitting now, goodbye!')
@@ -66,6 +88,7 @@ def main():
                 print('tl  -  enter timeline.')
             case _:
                 print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
+        '''
     
     cfgs.saveConfigs()
 
