@@ -9,7 +9,7 @@ from chitose import BskyAgent
 from urllib.error import HTTPError
 
 def main():
-    print('BluesCLI v0.1 - Coded by Elbs <3')
+    print('BluesCLI v0.2 - Coded by Elbs <3')
 
     isLoggedIn = False
     endProg = False
