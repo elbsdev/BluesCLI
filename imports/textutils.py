@@ -9,12 +9,12 @@ class bcolors:
     end = '\033[0m'
 
 def noMojis(text): #removes emojis
-    rgx = r'[\U0001F600-\U0001F64F]|[\U0001F300-\U0001F5FF]|[\U0001F680-\U0001F6FF]|[\U0001F1E0-\U0001FAFF]'
+    rgx = r'[\U0001F600-\U0001F64F]|[\U0001F300-\U0001F5FF]|[\U0001F680-\U0001F6FF]|[\U0001F1E0-\U0001FAFF]|[\U0000FE00-\U0000FEFF]||[\U0001D000-\U0001DFFF]' #two last regexes are for iphone compat
     return re.sub(rgx, '', text)
 
-def formatPostText(text):
+def formatPostText(text, prefix, level):
     txt = text
-    maxSz = os.get_terminal_size()[0]-2
+    maxSz = os.get_terminal_size()[0]-level-2
     lines = []
 
     while True:
@@ -42,4 +42,4 @@ def formatPostText(text):
         if (len(txt) == 0): break
     
     for li in lines:
-        print(bcolors.green+'║'+bcolors.end+li)
+        print(bcolors.green+prefix+bcolors.end+li)

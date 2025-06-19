@@ -9,6 +9,7 @@ class cfgs:
         'showEmojis' : True,
         'postsPerPage' : 4,
         'timezone' : 'America/Sao_Paulo',
+        'clearScreen' : True,
         'session' : {
             'did' : '',
             'accessJwt' : '',
@@ -22,7 +23,8 @@ class cfgs:
     descriptions = {
         'showEmojis' : 'Disable emojis for terminals that can\'t display them properly.',
         'postsPerPage' : 'Number of posts shown in each timeline page.',
-        'timezone' : 'Your current timezone. Default is São Paulo because i\'m brazilian.'
+        'timezone' : 'Your current timezone. Default is São Paulo because i\'m brazilian.',
+        'clearScreen' : 'Clears the screen when navigating through timeline pages.'
     }
 
     def loadConfigs():
