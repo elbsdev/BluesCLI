@@ -4,7 +4,7 @@ BluesCLI is a text mode only client for BlueSky, it's not so useful, but is a co
 ![the program running](git-images/img01.png)
 
 ## Dependencies
-[Chitose](https://github.com/mnogu/chitose) MUST be compiled and installed from github, not pip<br>
+[Chitose](https://github.com/mnogu/chitose)<br>
 [Pytz](https://pypi.org/project/pytz/)<br>
 [Dateutil](https://github.com/dateutil/dateutil)<br>
 
