@@ -1,10 +1,10 @@
 # BluesCLI
-BluesCLI is a text mode only client for BlueSky, the project started as a way to use the network in an jailbroken iPhone 5S, as it uses iOS 12.5 and the official bsky app doesn't support it :(
+BluesCLI is a text mode only client for BlueSky, it's not so useful, but is a cool project.
 
 ![the program running](git-images/img01.png)
 
 ## Dependencies
-[Chitose](https://github.com/mnogu/chitose)<br>
+[Chitose](https://github.com/mnogu/chitose) MUST be compiled and installed from github, not pip<br>
 [Pytz](https://pypi.org/project/pytz/)<br>
 [Dateutil](https://github.com/dateutil/dateutil)<br>
 
@@ -14,7 +14,7 @@ Just clone the repo:
     git clone https://github.com/elbsdev/BluesCLI.git
     cd BluesCLI
 
-Install the dependencies manually or type:
+Install the requirements:
 
     pip install -r requirements.txt
 

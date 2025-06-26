@@ -69,27 +69,7 @@ def main():
 
         else:
             print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
-        '''
-        match cmdSplit[0]:
-            case 'quit':
-                print('Quitting now, goodbye!')
-                endProg = True
-            case 'config':
-                if (len(cmdSplit) > 1):
-                    cfgs.config(cmdSplit[1])
-                else:
-                    print(txtu.bcolors.red+'No parameters provided, try \'config.help´\' to get a list of parameters.'+txtu.bcolors.end)
-            case 'tl':
-                tl.timeline(agent)
-            case 'help':
-                print(txtu.bcolors.blue+'---Help---'+txtu.bcolors.end)
-                print('config  -  change configuration variables.')
-                print('help  -  this help text.')
-                print('tl  -  enter timeline.')
-            case _:
-                print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
-        '''
-    
+            
     cfgs.saveConfigs()
 
 if __name__ == '__main__':

@@ -41,7 +41,6 @@ class cfgs:
         print(txtu.bcolors.blue+'---Configs---'+txtu.bcolors.end)
         for item in cfgs.cfg:
             if (type(cfgs.cfg[item]) != dict):
-                #print(item+' - '+cfgs.descriptions[item]+' : '+str(cfgs.cfg[item]))
                 print(item+' - '+str(cfgs.cfg[item]))
 
     def config(param):
@@ -53,9 +52,14 @@ class cfgs:
             paramVal = None
         if (param == 'list'):
             cfgs.listConfigs()
+        elif (param == 'desc'):
+            for item in cfgs.cfg:
+                if (type(cfgs.cfg[item]) != dict):
+                    print(item+' - '+cfgs.descriptions[item])
         elif (param == 'help'):
             print(txtu.bcolors.blue+'---Configs help---'+txtu.bcolors.end)
             print('The following parameters are available for use with '+txtu.bcolors.bold+'config'+txtu.bcolors.end+' command:')
+            print('desc - Prints a description of each variable.')
             print('list - Lists the configuration variables and their current values.')
             print('help - Show this help text.')
             print('\nTo change a variable, the syntax is: '+txtu.bcolors.bold+'config.variableName=newValue'+txtu.bcolors.end)

@@ -5,6 +5,7 @@ class bcolors:
     blue = '\033[94m'
     green = '\033[92m'
     red = '\033[31m'
+    yellow = '\033[33m]'
     bold = '\033[1m'
     end = '\033[0m'
 
