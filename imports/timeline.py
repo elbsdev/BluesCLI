@@ -5,7 +5,10 @@ import math
 import pytz
 import os
 import json
+import climage
+import requests
 
+from io import BytesIO
 from dateutil import parser
 from datetime import datetime
 from datetime import timezone
@@ -156,6 +159,7 @@ def timeline(agent):
         cmd = cmdIn.split('.')[0]
         param = cmdIn[cmdIn.find('.')+1:]
         
+        #TODO: put all this code in specific functions, so this are is easier to read
         if (cmd == 'r'):
             if (cfgs.cfg['clearScreen']):
                 os.system('clear')
@@ -355,7 +359,19 @@ def timeline(agent):
                 print('Showing page '+str(page)+'/'+str(maxPages))
             else:
                 txtu.printWarn('This is the first page.')
-            
+        
+        elif (cmd == 'viewimg'):
+            try:
+                postNum = int(param)
+                post = feedJson['feed'][postNum]['post']
+                if ('embed' in post):
+                    if ('images' in post['embed']):
+                        for img in post['embed']['images']:
+                            req = requests.get(img['fullsize'])
+                            cImg = climage.convert(BytesIO(req.content))
+                            print(cImg)
+            except:
+                txtu.printErr('The parameter provided is not a number.')
         
         elif (cmd == 'help'):
             print(txtu.bcolors.blue+'---Timeline commands---'+txtu.bcolors.end)
@@ -374,6 +390,8 @@ def timeline(agent):
             print('         Usage: repost.<post number>')
             print('quote    -  Repost a post with a quote.')
             print('         Usage: repost.<post number>')
+            print('viewimg  -  View images from a post in ANSI art style')
+            print('         Usage: viewimg.<post number>')
             print(txtu.colors.blue+'--Thread interaction--'+txtu.bcolors.end)
             print('thlike   -  Like a reply in a thread')
             print('         Usage: thlike.<reply number>')
