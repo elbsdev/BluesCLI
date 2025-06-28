@@ -7,6 +7,8 @@ BluesCLI is a text mode only client for BlueSky, it's not so useful, but is a co
 [Chitose](https://github.com/mnogu/chitose)<br>
 [Pytz](https://pypi.org/project/pytz/)<br>
 [Dateutil](https://github.com/dateutil/dateutil)<br>
+[climage](https://github.com/pnappa/CLImage)<br>
+[Requests](https://github.com/psf/requests)<br>
 
 ## Usage
 Just clone the repo:
