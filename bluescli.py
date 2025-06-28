@@ -9,7 +9,7 @@ from chitose import BskyAgent
 from urllib.error import HTTPError
 
 def main():
-    print('BluesCLI v0.2 - Coded by Elbs <3')
+    print('BluesCLI v0.3 - Coded by Elbs <3')
 
     isLoggedIn = False
     endProg = False
@@ -24,9 +24,13 @@ def main():
             agent.session['did'] = cfgs.cfg['session']['did']
             agent.get_timeline(limit=1)
             isLoggedIn = True
-        except HTTPError:
-            print(txtu.bcolors.red+'Invalid session, you need to re-login.'+txtu.bcolors.end)
-            isLoggedIn = False
+        except HTTPError as e:
+            if (e.code == 400):
+                txtu.printErr('Invalid session, you need to login.')
+                isLoggedIn = False
+            else:
+                txtu.printErr('Connection error, status code: '+str(e.code))
+                exit()
     
     while (not isLoggedIn):
         print('Please, provide your user credentials, your password will be hidden.')
@@ -40,8 +44,12 @@ def main():
             cfgs.cfg['session']['did'] = agent.session['did']
             cfgs.saveConfigs()
             isLoggedIn = True
-        except HTTPError:
-            print(txtu.bcolors.red+'Login error, please check your credentials and try again.\n'+txtu.bcolors.end)
+        except HTTPError as e:
+            if (e.code == 401):
+                txtu.printErr('Server returned 401. Identifier or password invalid.')
+            else:
+                txtu.printErr('Unhandled status code when loggin in: '+str(e.code))
+                exit()
     
     #command processing
     while (not endProg):
@@ -56,7 +64,7 @@ def main():
             if (len(cmdSplit) > 1):
                 cfgs.config(cmdSplit[1])
             else:
-                print(txtu.bcolors.red+'No parameters provided, try \'config.help´\' to get a list of parameters.'+txtu.bcolors.end)
+                cfgs.config('help')
         
         elif (cmdSplit[0] == 'tl'):
             tl.timeline(agent)
@@ -68,7 +76,7 @@ def main():
             print('tl  -  enter timeline.')
 
         else:
-            print(txtu.bcolors.red+'Invalid command, try help to get a list of commands.'+txtu.bcolors.end)
+            printErr('Invalid command, use the \'help\' command to get a list of commands.')
             
     cfgs.saveConfigs()
 
