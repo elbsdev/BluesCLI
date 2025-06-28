@@ -24,14 +24,29 @@ class cfgs:
         'showEmojis' : 'Disable emojis for terminals that can\'t display them properly.',
         'postsPerPage' : 'Number of posts shown in each timeline page.',
         'timezone' : 'Your current timezone. Default is São Paulo because i\'m brazilian.',
-        'clearScreen' : 'Clears the screen when navigating through timeline pages.'
+        'clearScreen' : 'Clears the screen when navigating through timeline pages.',
     }
 
     def loadConfigs():
         if (os.path.isfile('config.json')):
+            tmpCfg = None
             with open('config.json', 'r') as f:
-                cfgs.cfg = json.loads(f.read())
-                cfgs.tz = pytz.timezone(cfgs.cfg['timezone'])
+                try:
+                    tmpCfg = json.loads(f.read())
+                except:
+                    txtu.printWarn('An error ocurred when loading the config file, the file will be ignored.')
+                    tmpCfg = None
+
+            if (tmpCfg != None):
+                for item in tmpCfg:
+                    if (item in cfgs.cfg):
+                        cfgs.cfg[item] = tmpCfg[item]
+                    else:
+                        txtu.printWarn(item+' is not a valid config entry, ignoring it.')
+            
+            #load the timezone
+            cfgs.tz = pytz.timezone(cfgs.cfg['timezone'])
+            
 
     def saveConfigs():
         with open('config.json', 'w') as f:
@@ -43,6 +58,12 @@ class cfgs:
             if (type(cfgs.cfg[item]) != dict):
                 print(item+' - '+str(cfgs.cfg[item]))
 
+    def listConfigsDescs():
+        for item in cfgs.cfg:
+            if (type(cfgs.cfg[item]) != dict):
+                print(item+' - '+cfgs.descriptions[item])
+
+    #TODO: remove the spaghetti code from the ifs and elifs, put them in dedicated functions so the code below doesnt look so polluted
     def config(param):
         if ('=' in param):
             paramName = param.split('=')[0]
@@ -53,9 +74,7 @@ class cfgs:
         if (param == 'list'):
             cfgs.listConfigs()
         elif (param == 'desc'):
-            for item in cfgs.cfg:
-                if (type(cfgs.cfg[item]) != dict):
-                    print(item+' - '+cfgs.descriptions[item])
+            cfgs.listConfigsDescs()
         elif (param == 'help'):
             print(txtu.bcolors.blue+'---Configs help---'+txtu.bcolors.end)
             print('The following parameters are available for use with '+txtu.bcolors.bold+'config'+txtu.bcolors.end+' command:')
@@ -75,13 +94,13 @@ class cfgs:
                             cfgs.tz = pytz.timezone(newVal)
                         except:
                             newVal = None
-                            print(txtu.bcolors.red+'Error! Invalid timezone.'+txtu.bcolors.end)
+                            txtu.printErr('Invalid timezone.')
                 elif (varType == int):
                     try:
                         newVal = int(paramVal)
-                    except:
+                    except Exception as e:
                         newVal = None
-                        print(txtu.bcolors.red+'Error! This variable requires an int value, but the valued informed couldn\'t be parsed.'+txtu.bcolors.end)
+                        txtu.printEx('The value informed couldn\'t be parsed as an integer.  ', e)
                 elif (varType == bool):
                     if (paramVal == 'True' or paramVal == 'true' or paramVal == '1'):
                         newVal = True
@@ -89,12 +108,12 @@ class cfgs:
                         newVal = False
                     else:
                         newVal = None
-                        print(txtu.bcolors.red+'Error! This variable requires an boolean value, but the valued informed is invalid.'+txtu.bcolors.end)                                
+                        txtu.printErr('This variable requires a boolean value. Valid values: True,true,1 or False,false,0')
                 else:
-                    print(txtu.bcolors.red+'Oops! cfg change for this type of variable is not implemented!'+txtu.bcolors.end)
+                    txtu.printWarn('Type '+str(varType)+' change not implemented yet.') #This message shoudn't be shown, its there just in case
                 
                 if (newVal != None):
-                    cfgs.cfg[paramName] = newVal
+                    cfgs.cfg[paramName] = newVal #If everything was OK, the new value is set
                     print(txtu.bcolors.bold+paramName+txtu.bcolors.end+' set to '+txtu.bcolors.bold+paramVal+txtu.bcolors.end)
             else:
-                print(txtu.bcolors.red+'Error! No variable named \''+paramName+'\' was found.'+txtu.bcolors.end)
+                txtu.printErr('Error, no variable named \''+paramName+'\' was found.')
