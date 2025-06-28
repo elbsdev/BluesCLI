@@ -9,6 +9,15 @@ class bcolors:
     bold = '\033[1m'
     end = '\033[0m'
 
+def printErr(text):
+    print(bcolors.red+text+bcolors.end)
+
+def printEx(text, ex):
+    print(bcolors.red+text+' '+bcolors.bold+str(ex)+bcolors.end)
+
+def printWarn(text):
+    print(bcolors.yellow+text+bcolors.end)
+
 def noMojis(text): #removes emojis
     rgx = r'[\U0001F600-\U0001F64F]|[\U0001F300-\U0001F5FF]|[\U0001F680-\U0001F6FF]|[\U0001F1E0-\U0001FAFF]|[\U0000FE00-\U0000FEFF]||[\U0001D000-\U0001DFFF]' #two last regexes are for iphone compat
     return re.sub(rgx, '', text)

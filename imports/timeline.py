@@ -106,7 +106,23 @@ def listPage(feedJson, startIndex, postsPerPage):
         
         gChrs = ['║', '╟', '╠', '═', '─']
 
-        if (text != '' and cnt >= startIndex):
+        if ('embed' in postData):
+            if ('images' in postData['embed']):
+                imgCnt = 0
+                altTxt = []
+                for img in postData['embed']['images']:
+                    imgCnt += 1
+                    alt = img['alt']
+                    if (alt == ''):
+                        altTxt.append('No alt text.')
+                    else:
+                        altTxt.append(alt)
+                text += '\n---------------------\n'
+                for i in range(0, imgCnt):
+                    text += 'Image #'+str(i+1)+': '+altTxt[i]+'\n'
+
+        #if (text != '' and cnt >= startIndex):
+        if (cnt >= startIndex):
             recType = '(post)'
             if ('reply' in record): recType = '(reply)'
             gChrsClr = [txtu.bcolors.green+gChrs[0]+txtu.bcolors.end, txtu.bcolors.green+gChrs[1]+txtu.bcolors.end, txtu.bcolors.green+gChrs[2]+txtu.bcolors.end, txtu.bcolors.green+gChrs[3]+txtu.bcolors.end, txtu.bcolors.green+gChrs[4]+txtu.bcolors.end]
@@ -155,9 +171,9 @@ def timeline(agent):
                     postToLike = feedJson['feed'][postNum]
                     agent.like(postToLike['post']['uri'], postToLike['post']['cid'])
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Check the post number provided. '+str(e)+txtu.bcolors.end)
+                    txtu.printWarn('Invalid post number provided.')
             except Exception as e:
-                print(txtu.bcolors.red+'The parameter provided is not a number.'+txtu.bcolors.end)
+                txtu.printErr('The parameter provided is not a number.')
         
         elif (cmd == 'reply'):
             try:
@@ -175,9 +191,9 @@ def timeline(agent):
                     record = Post(text=replyText, created_at=datetime.now(timezone.utc).isoformat(), reply=replyRef)
                     agent.post(record=record)
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error sending reply. '+txtu.bcolors.end+str(e))
+                    txtu.printEx('Error sending reply: ', e)
             except:
-                print(txtu.bcolors.red+'The parameter provided is not a number.'+txtu.bcolors.end)
+                txtu.printErr('The parameter provided is not a number.')
         
         elif (cmd == 'thread'):
             try:
@@ -198,16 +214,16 @@ def timeline(agent):
                     listThread(threadJson)
                     
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Posts couldn\'t be loaded.'+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error loading thread: ', e)
             except:
-                print(txtu.bcolors.red+'The parameter provided is not a number.'+txtu.bcolors.end)
+                txtu.printErr('The parameter provided is not a number.')
 
         elif (cmd == 'thlike'):
             postTree = param.split(',')
             if (len(postTree) > 0):
                 try:
                     if (threadJson == None):
-                        print(txtu.bcolors.red+'No thread was loaded!'+txtu.bcolors.end)
+                        txtu.printWarn('No thread was loaded!')
                     else:
                         postToLike = threadJson['thread']
 
@@ -216,16 +232,16 @@ def timeline(agent):
 
                         agent.like(uri=postToLike['post']['uri'], cid=postToLike['post']['cid'])
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurred when liking a thread reply. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error liking thread reply: ', e)
             else:
-                print(txtu.bcolors.red+'Error! Missing parameters.'+txtu.bcolors.end)
+                txtu.printErr('No parameter was provided.')
             
         elif (cmd == 'threply'):
             postTree = param.split(',')
             if (len(postTree) > 0):
                 try:
                     if (threadJson == None):
-                        print(txtu.bcolors.red+'No thread was loaded!'+txtu.bcolors.end)
+                        txtu.printWarn('No thread was loaded!')
                     else:
                         postToReply = threadJson['thread']
 
@@ -241,16 +257,16 @@ def timeline(agent):
                         agent.post(record=record)
                         
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurred when liking a reply. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error replying: ', e)
             else:
-                print(txtu.bcolors.red+'Error! Missing parameters!'+txtu.bcolors.end)
+                txtu.printErr('No parameter was provided.')
         
         elif (cmd == 'threpost'):
             postTree = param.split(',')
             if (len(postTree) > 0):
                 try:
                     if (threadJson == None):
-                        print(txtu.bcolors.red+'No thread was loaded!'+txtu.bcolors.end)
+                        txtu.printWarn('No thread was loaded!')
                     else:
                         postToRepost = threadJson['thread']
 
@@ -259,16 +275,16 @@ def timeline(agent):
                         
                         agent.repost(uri=postToRepost['post']['uri'], cid=postToRepost['post']['cid'])
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurred when reposting a reply. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error reposting: ', e)
             else:
-                print(txtu.bcolors.red+'Error! Missing parameters!'+txtu.bcolors.end)
+                txtu.printErr('No parameter was provided.')
         
         elif (cmd == 'thquote'):
             postTree = param.split(',')
             if (len(postTree) > 0):
                 try:
                     if (threadJson == None):
-                        print(txtu.bcolors.red+'No thread was loaded!'+txtu.bcolors.red)
+                        txtu.printWarn('No thread was loaded!')
                     else:
                         postToQuote = threadJson['thread']
 
@@ -281,13 +297,16 @@ def timeline(agent):
                         postRec = Post(text=postText, created_at=datetime.now(timezone.utc).isoformat(), embed=embedRec)
                         agent.post(record=postRec)
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurrend when quoting a reply. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error quoting: ', e)
             else:
-                print(txtu.bcolors.red+'Error! Missing parameters!'+txtu.bcolors.end)
+                txtu.printErr('No parameter was provided')
         
         elif (cmd == 'post'):
-            record = Post(text=param, created_at=datetime.now(timezone.utc).isoformat())
-            agent.post(record=record)
+            try:
+                record = Post(text=param, created_at=datetime.now(timezone.utc).isoformat())
+                agent.post(record=record)
+            except:
+                txtu.printEx('Error creating post: ', e)
         
         elif (cmd == 'repost'):
             try:
@@ -296,9 +315,9 @@ def timeline(agent):
                     postToRepost = feedJson['feed'][postNum]
                     agent.repost(uri=postToRepost['post']['uri'], cid=postToRepost['post']['cid'])
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurred when reposting. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error reposting: ', e)
             except:
-                print(txtu.bcolors.red+'The parameter provided is not a number.'+txtu.bcolors.end)
+                txtu.printErr('The parameter provided is not a number.')
         
         elif (cmd == 'quote'):
             try:
@@ -311,9 +330,9 @@ def timeline(agent):
                     postRec = Post(text=postText, created_at=datetime.now(timezone.utc).isoformat(), embed=embedRec)
                     agent.post(record=postRec)
                 except Exception as e:
-                    print(txtu.bcolors.red+'Error! Error ocurred when reposting. '+str(e)+txtu.bcolors.end)
+                    txtu.printEx('Error quoting: ', e)
             except:
-                print(txtu.bcolors.red+'The parameter provided is not a number.'+txtu.bcolors.end)
+                txtu.printErr('The parameter provided is not a number.')
         
         elif (cmd == 'np'): #Next timeline page
             if (page < maxPages):
@@ -323,6 +342,8 @@ def timeline(agent):
                 startIdx = cfgs.cfg['postsPerPage']*(page-1)
                 listPage(feedJson, startIdx, cfgs.cfg['postsPerPage'])
                 print('Showing page '+str(page)+'/'+str(maxPages))
+            else:
+                txtu.printWarn('This is the last page.')
         
         elif (cmd == 'pp'): #Previous timeline page
             if (page > 1):
@@ -332,6 +353,8 @@ def timeline(agent):
                 startIdx = cfgs.cfg['postsPerPage']*(page-1)
                 listPage(feedJson, startIdx, cfgs.cfg['postsPerPage'])
                 print('Showing page '+str(page)+'/'+str(maxPages))
+            else:
+                txtu.printWarn('This is the first page.')
             
         
         elif (cmd == 'help'):
