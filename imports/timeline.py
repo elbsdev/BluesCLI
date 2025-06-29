@@ -392,7 +392,7 @@ def timeline(agent):
             print('         Usage: repost.<post number>')
             print('viewimg  -  View images from a post in ANSI art style')
             print('         Usage: viewimg.<post number>')
-            print(txtu.colors.blue+'--Thread interaction--'+txtu.bcolors.end)
+            print(txtu.bcolors.blue+'--Thread interaction--'+txtu.bcolors.end)
             print('thlike   -  Like a reply in a thread')
             print('         Usage: thlike.<reply number>')
             print('         In case you want to like a reply to a reply:')
